@@ -11,7 +11,7 @@ server.use(bodyParser.urlencoded({extended:true}));
 server.set('view engine', 'hbs');
 hbs.registerPartials(__dirname + '/views/partials');
 
-const PLACES_API_KEY = 'AIzaSyCXYaMh3-lkp43HqsbvxC-DYG55SgQNbf8';
+const PLACES_API_KEY = 'AIzaSyCOuQBxyC6T2uyyh5NDmTpvI5gk33ygk5c';
 
 server.get ('/form',(req,res)=>{
   res.render('form.hbs');
@@ -32,11 +32,12 @@ axios.get(locationReq).then((response) => {
     lng:response.data.results[0].geometry.location.lng,
   }
 
-const placesReq = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${locationData.lat},${locationData.lng}&radius=1500&types=food&name=food&key=AIzaSyCXYaMh3-lkp43HqsbvxC-DYG55SgQNbf8=${PLACES_API_KEY}`;
+const placesReq = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${locationData.lat},${locationData.lng}&radius=1500&types=food&name=food&key=${PLACES_API_KEY}`;
 
-  console.log(locationData);
-  res.status(200).send(locationData);
+return axios.get(placesReq);
 
+}).then((response)=>{
+  res.status(200).send(response.data.results);
 }).catch((error)=>{
   console.log(error);
 });
