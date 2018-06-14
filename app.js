@@ -16,7 +16,7 @@ var filteredResults;
 
 hbs.registerHelper('list',(items,options)=>{
   items = filteredResults;
-  var out ="<tr><th>Name</th></tr>";
+  var out ="<tr><th>Name</th>,<th>Address</th>,<th>Photos</th></tr>";
   const length = items.length;
 
   for(var i=0;i<length;i++){
@@ -69,11 +69,29 @@ const extractData = (originalResults)=>{
   };
 
   const length = originalResults.length;
-
   for (var i=0; i<length; i ++){
-    tempObj={
-      name: originalResults[i].name,
-    }
+if(originalResults[i].photos){
+  const photoRef = originalResults[i].photos[0].photo_reference;
+  const requestUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoRef}&key=${PLACES_API_KEY}`
+  tempObj={
+    name: originalResults[i].name,
+    address:originalResults[i].vicinity,
+    photo_reference:requestUrl,
+
+
+  }
+}else{
+  tempObj={
+    name: originalResults[i].name,
+    address:originalResults[i].vicinity,
+    photo_reference:'https://www.freeiconspng.com/uploads/no-image-icon-4.png',
+
+
+  }
+
+}
+
+
   placesObj.table.push(tempObj);
   }
   return placesObj.table;
