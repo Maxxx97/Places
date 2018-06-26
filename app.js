@@ -3,6 +3,8 @@ const express = require ('express');
 const hbs = require('hbs');
 const bodyParser = require('body-parser');
 const server = express();
+const path = require('path');
+const filemgr = require('./filemgr');
 
 const port = process.env.PORT || 3000;
 
@@ -24,6 +26,8 @@ hbs.registerHelper('list',(items,options)=>{
   }
   return out;
 });
+
+server.use(express.static(path.join(__dirname,'public')));
 
 server.get ('/form',(req,res)=>{
   res.render('form.hbs');
@@ -54,12 +58,28 @@ return axios.get(placesReq);
 
 filteredResults = extractData(response.data.results);
 
+filemgr.saveData(filteredResults).then((result)=>{
+  res.render('result.hbs');
+}).catch((errorMessage) => {
+  console.log(errorMessage);
+});
+
   //res.status(200).send(filteredResults);
   res.render('result.hbs');
 }).catch((error)=>{
   console.log(error);
 });
 
+
+});
+
+server.get('/historical',(req,res)=>{
+  filemgr.getAllData().then((result)=>{
+    filteredResults = result;
+    res.render('historical.hbs');
+  }).catch((errorMessage)=>{
+    console.log(errorMessage);
+  });
 
 });
 
@@ -84,7 +104,7 @@ if(originalResults[i].photos){
   tempObj={
     name: originalResults[i].name,
     address:originalResults[i].vicinity,
-    photo_reference:'https://www.freeiconspng.com/uploads/no-image-icon-4.png',
+    photo_reference:'/no_image_found.png',
 
 
   }
