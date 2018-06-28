@@ -43,6 +43,15 @@ server.post('/getplaces',(req,res) => {
   const name = req.body.name;
   const locationReq = `https://maps.googleapis.com/maps/api/geocode/json?address=${addr}&key=AIzaSyA9HmIKh3Yv-T9zS_JxjMZb8ZpEOpq7AtQ`;
 
+  server.post('/delete', (req, res) => {
+    filemgr.deleteAll().then((result) => {
+      filteredResults = result;
+      res.render('historical.hbs');
+    }).catch((errorMessage) => {
+      console.log(errorMessage);
+    });
+  })
+
 axios.get(locationReq).then((response) => {
   const locationData = {
     addr:response.data.results[0].formatted_address,
